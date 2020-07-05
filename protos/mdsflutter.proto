@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_package = "com.tugberka.mdsflutter";
+option java_outer_classname = "Protos";
+option objc_class_prefix = "Protos";
+
+message RequestResult {
+    int32 requestId = 1;
+    int32 statusCode = 2;
+    string data = 3;
+}
+
+message RequestError {
+    int32 requestId = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message Notification {
+    int32 subscriptionId = 1;
+    string data = 2;
+}
+
+message NotificationError {
+    int32 subscriptionId = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}

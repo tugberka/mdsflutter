@@ -1,0 +1,13 @@
+.DS_Store
+.dart_tool/
+.idea/
+
+.packages
+.metadata
+.pub/
+
+build/
+pubspec.lock
+example/ios/Podfile.lock
+mdsflutter.iml
+example/android/libs/*
