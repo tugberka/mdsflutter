@@ -19,6 +19,13 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        flatDir {
+            if (findProject(':mdsflutter') != null) {
+                dirs project(":mdsflutter").file('libs')
+            } else {
+                dirs file('libs')
+            }
+        }
     }
 }
 
@@ -71,5 +78,5 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-lite:3.0.1'
     // RxAndroidBle helper library
     implementation "com.polidea.rxandroidble2:rxandroidble:1.11.0"
-    implementation(name: 'mdslib', version: '+', ext: 'aar')
+    implementation (name: 'mdslib-1.44.0', ext: 'aar')
 }
