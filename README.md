@@ -15,19 +15,8 @@ Flutter plugin for MDS (Movesense Device Service) that is used for communicating
 
 #### Android
 
-1. Download 'mdslib-x.x.x-release.aar' from movesense-mobile-lib repository and put it somewhere under 'android' folder of your app. Preferably create a new folder named 'android/libs' and put it there.
+No extra steps are required
 
-2. In 'build.gradle' of your android project, add the following lines (assuming .aar file is in android/libs):
-```
-allprojects {
-    repositories {
-        ...
-        flatDir{
-            dirs "$rootDir/libs"
-        }
-    }
-}
-```
 ## Usage
 
 ```dart
