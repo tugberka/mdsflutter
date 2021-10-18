@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -19,10 +18,10 @@ class MdsImpl {
   Map _requestErrorCbMap = Map<int, void Function(String, int)>();
   Map _notifyCbMap = Map<int, void Function(String)>();
   Map _subscriptionErrorCbMap = Map<int, void Function(String, int)>();
-  Map _serialToAddressMap = Map<String, String>();
-  void Function(String, String) _newScannedDeviceCb;
+  Map _serialToAddressMap = Map<String?, String?>();
+  void Function(String?, String?)? _newScannedDeviceCb;
 
-  void startScan(void Function(String, String) onNewDeviceFound) {
+  void startScan(void Function(String?, String?) onNewDeviceFound) {
     _newScannedDeviceCb = onNewDeviceFound;
     _channel.invokeMethod('startScan', null);
   }
@@ -32,11 +31,8 @@ class MdsImpl {
     _channel.invokeMethod('stopScan', null);
   }
 
-  void connect(
-      String address,
-      void Function(String) onConnected,
-      void Function() onDisconnected,
-      void Function() onConnectionError) {
+  void connect(String address, void Function(String) onConnected,
+      void Function() onDisconnected, void Function() onConnectionError) {
     _channel.invokeMethod('connect', {"address": address});
     _connectCbMap[address] = onConnected;
     _disconnectCbMap[address] = onDisconnected;
@@ -47,60 +43,48 @@ class MdsImpl {
     _channel.invokeMethod('disconnect', {"address": address});
   }
 
-  void get(
-      String uri,
-      String contract,
-      void Function(String, int) onSuccess,
+  void get(String uri, String contract, void Function(String, int) onSuccess,
       void Function(String, int) onError) {
     _idCounter++;
     _requestResultCbMap[_idCounter] = onSuccess;
     _requestErrorCbMap[_idCounter] = onError;
-    _channel.invokeMethod('get', <String, dynamic> {
+    _channel.invokeMethod('get', <String, dynamic>{
       "uri": uri,
       "contract": contract,
       "requestId": _idCounter
     });
   }
 
-  void put(
-      String uri,
-      String contract,
-      void Function(String, int) onSuccess,
+  void put(String uri, String contract, void Function(String, int) onSuccess,
       void Function(String, int) onError) {
     _idCounter++;
     _requestResultCbMap[_idCounter] = onSuccess;
     _requestErrorCbMap[_idCounter] = onError;
-    _channel.invokeMethod('put', <String, dynamic> {
+    _channel.invokeMethod('put', <String, dynamic>{
       "uri": uri,
       "contract": contract,
       "requestId": _idCounter
     });
   }
 
-  void post(
-      String uri,
-      String contract,
-      void Function(String, int) onSuccess,
+  void post(String uri, String contract, void Function(String, int) onSuccess,
       void Function(String, int) onError) {
     _idCounter++;
     _requestResultCbMap[_idCounter] = onSuccess;
     _requestErrorCbMap[_idCounter] = onError;
-    _channel.invokeMethod('post', <String, dynamic> {
+    _channel.invokeMethod('post', <String, dynamic>{
       "uri": uri,
       "contract": contract,
       "requestId": _idCounter
     });
   }
 
-  void del(
-      String uri,
-      String contract,
-      void Function(String, int) onSuccess,
+  void del(String uri, String contract, void Function(String, int) onSuccess,
       void Function(String, int) onError) {
     _idCounter++;
     _requestResultCbMap[_idCounter] = onSuccess;
     _requestErrorCbMap[_idCounter] = onError;
-    _channel.invokeMethod('del', <String, dynamic> {
+    _channel.invokeMethod('del', <String, dynamic>{
       "uri": uri,
       "contract": contract,
       "requestId": _idCounter
@@ -131,7 +115,7 @@ class MdsImpl {
       mdsContract = json.encode(contractMap);
     }
 
-    _channel.invokeMethod('subscribe', <String, dynamic> {
+    _channel.invokeMethod('subscribe', <String, dynamic>{
       "uri": mdsUri,
       "contract": mdsContract,
       "requestId": _idCounter,
@@ -163,38 +147,31 @@ class MdsImpl {
   }
 
   void _doConnectSubscription() {
-    subscribe(
-        "MDS/ConnectedDevices",
-        "{}",
-            (d, c) => {},
-            (e, c) => {},
-            (data) {
-          final decoded = jsonDecode(data);
-          final method = decoded["Method"];
-          if (method == "POST") {
-            if (decoded.containsKey("Body")) {
-              final body = decoded["Body"];
-              final deviceInfo = body["DeviceInfo"];
-              final connection = body["Connection"];
-              final uuid = connection["UUID"] as String;
-              final serial = deviceInfo["serial"] as String;
-              _serialToAddressMap[serial] = uuid;
-              _onConnect(uuid, serial);
-            }
-          } else if (method == "DEL") {
-            final body = decoded["Body"];
-            final serial = body["Serial"] as String;
-            if (_serialToAddressMap.containsKey(serial)) {
-              _onDisconnect(_serialToAddressMap[serial]);
-            }
-          }
-        },
-            (e, c) => {}
-    );
+    subscribe("MDS/ConnectedDevices", "{}", (d, c) => {}, (e, c) => {}, (data) {
+      final decoded = jsonDecode(data);
+      final method = decoded["Method"];
+      if (method == "POST") {
+        if (decoded.containsKey("Body")) {
+          final body = decoded["Body"];
+          final deviceInfo = body["DeviceInfo"];
+          final connection = body["Connection"];
+          final uuid = connection["UUID"] as String?;
+          final serial = deviceInfo["serial"] as String?;
+          _serialToAddressMap[serial] = uuid;
+          _onConnect(uuid, serial);
+        }
+      } else if (method == "DEL") {
+        final body = decoded["Body"];
+        final serial = body["Serial"] as String?;
+        if (_serialToAddressMap.containsKey(serial)) {
+          _onDisconnect(_serialToAddressMap[serial]);
+        }
+      }
+    }, (e, c) => {});
   }
 
   Future<void> _onNativeMethodCall(MethodCall call) async {
-    switch(call.method) {
+    switch (call.method) {
       case "onNewScannedDevice":
         Map args = call.arguments;
         _onNewScannedDevice(args["name"], args["address"]);
@@ -203,24 +180,26 @@ class MdsImpl {
         Map args = call.arguments;
         _onConnect(args["address"], args["serial"]);
         break;
-        break;
+
       case "onDisconnect":
-        String address = call.arguments;
+        String? address = call.arguments;
         _onDisconnect(address);
         break;
       case "onConnectionError":
-        String address = call.arguments;
+        String? address = call.arguments;
         _onConnectionError(address);
         break;
       case "onRequestResult":
         final Uint8List proto = call.arguments;
         final RequestResult requestResult = RequestResult.fromBuffer(proto);
-        _onRequestResult(requestResult.requestId, requestResult.data, requestResult.statusCode);
+        _onRequestResult(requestResult.requestId, requestResult.data,
+            requestResult.statusCode);
         break;
       case "onRequestError":
         final Uint8List proto = call.arguments;
         final RequestError requestError = RequestError.fromBuffer(proto);
-        _onRequestError(requestError.requestId, requestError.error, requestError.statusCode);
+        _onRequestError(requestError.requestId, requestError.error,
+            requestError.statusCode);
         break;
       case "onNotification":
         final Uint8List proto = call.arguments;
@@ -230,28 +209,29 @@ class MdsImpl {
       case "onNotificationError":
         final Uint8List proto = call.arguments;
         final NotificationError error = NotificationError.fromBuffer(proto);
-        _onSubscriptionError(error.subscriptionId, error.error, error.statusCode);
+        _onSubscriptionError(
+            error.subscriptionId, error.error, error.statusCode);
         break;
     }
   }
 
-  void _onNewScannedDevice(String name, String address) {
+  void _onNewScannedDevice(String? name, String? address) {
     if (_newScannedDeviceCb != null) {
-      _newScannedDeviceCb(name, address);
+      _newScannedDeviceCb!(name, address);
     }
   }
 
-  void _onConnect(String address, String serial) {
+  void _onConnect(String? address, String? serial) {
     if (_connectCbMap.containsKey(address)) {
-      developer.log("New connected device with serial: " + serial);
+      developer.log("New connected device with serial: " + serial!);
       void Function(String) cb = _connectCbMap[address];
       cb(serial);
     }
   }
 
-  void _onDisconnect(String address) {
+  void _onDisconnect(String? address) {
     if (_disconnectCbMap.containsKey(address)) {
-      developer.log("Device disconnected, address: " + address);
+      developer.log("Device disconnected, address: " + address!);
       void Function() cb = _disconnectCbMap[address];
       cb();
       _connectCbMap.remove(address);
@@ -260,9 +240,9 @@ class MdsImpl {
     }
   }
 
-  void _onConnectionError(String address) {
+  void _onConnectionError(String? address) {
     if (_connectErrorCbMap.containsKey(address)) {
-      developer.log("Device connection error, address: " + address);
+      developer.log("Device connection error, address: " + address!);
       void Function() cb = _connectErrorCbMap[address];
       cb();
       _connectCbMap.remove(address);

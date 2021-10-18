@@ -9,7 +9,7 @@ class Mds {
   /// devices will get UUID as the address parameter. Scanning is terminated
   /// automatically after 60 seconds. Only devices with Movesense services are
   /// returned.
-  static void startScan(void Function(String, String) onNewDeviceFound) {
+  static void startScan(void Function(String?, String?) onNewDeviceFound) {
     MdsImpl().startScan(onNewDeviceFound);
   }
 
@@ -27,10 +27,8 @@ class Mds {
   /// Note: If you need DeviceInfo upon connection, you should manually
   /// subscribe to "MDS/ConnectedDevices" to get detailed device information
   /// upon connection.
-  static void connect(String address,
-      void Function(String) onConnected,
-      void Function() onDisconnected,
-      void Function() onConnectionError) {
+  static void connect(String address, void Function(String) onConnected,
+      void Function() onDisconnected, void Function() onConnectionError) {
     MdsImpl().connect(address, onConnected, onDisconnected, onConnectionError);
   }
 
@@ -44,7 +42,8 @@ class Mds {
   /// request is successful, onSuccess is called with response data in json
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
-  static void get(String uri,
+  static void get(
+      String uri,
       String contract,
       void Function(String, int) onSuccess,
       void Function(String, int) onError) {
@@ -56,7 +55,8 @@ class Mds {
   /// request is successful, onSuccess is called with response data in json
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
-  static void put(String uri,
+  static void put(
+      String uri,
       String contract,
       void Function(String, int) onSuccess,
       void Function(String, int) onError) {
@@ -68,7 +68,8 @@ class Mds {
   /// request is successful, onSuccess is called with response data in json
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
-  static void post(String uri,
+  static void post(
+      String uri,
       String contract,
       void Function(String, int) onSuccess,
       void Function(String, int) onError) {
@@ -80,7 +81,8 @@ class Mds {
   /// request is successful, onSuccess is called with response data in json
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
-  static void del(String uri,
+  static void del(
+      String uri,
       String contract,
       void Function(String, int) onSuccess,
       void Function(String, int) onError) {
@@ -98,7 +100,8 @@ class Mds {
   ///
   /// This call returns a subscription id. It must be held and used when
   /// unsubscribing.
-  static int subscribe(String uri,
+  static int subscribe(
+      String uri,
       String contract,
       void Function(String, int) onSuccess,
       void Function(String, int) onError,
@@ -118,6 +121,6 @@ class Mds {
   }
 
   static String createSubscriptionUri(String serial, String resource) {
-    return  serial + resource;
+    return serial + resource;
   }
 }
