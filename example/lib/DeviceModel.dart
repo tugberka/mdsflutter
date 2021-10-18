@@ -12,12 +12,12 @@ class DeviceModel extends ChangeNotifier {
   String get name => _name;
   String get serial => _serial;
 
-  int _accSubscription;
+  int? _accSubscription;
   String _accelerometerData = "";
   String get accelerometerData => _accelerometerData;
   bool get accelerometerSubscribed => _accSubscription != null;
 
-  int _hrSubscription;
+  int? _hrSubscription;
   String _hrData = "";
   String get hrData => _hrData;
   bool get hrSubscribed => _hrSubscription != null;
@@ -38,8 +38,7 @@ class DeviceModel extends ChangeNotifier {
         (d, c) => {},
         (e, c) => {},
         (data) => _onNewAccelerometerData(data),
-        (e, c) => {}
-    );
+        (e, c) => {});
     notifyListeners();
   }
 
@@ -48,12 +47,18 @@ class DeviceModel extends ChangeNotifier {
     Map<String, dynamic> body = accData["Body"];
     List<dynamic> accArray = body["ArrayAcc"];
     dynamic acc = accArray.last;
-    _accelerometerData = "x: " + acc["x"].toStringAsFixed(2) + "\ny: " + acc["y"].toStringAsFixed(2) + "\nz: " + acc["z"].toStringAsFixed(2);
+    _accelerometerData = "x: " +
+        acc["x"].toStringAsFixed(2) +
+        "\ny: " +
+        acc["y"].toStringAsFixed(2) +
+        "\nz: " +
+        acc["z"].toStringAsFixed(2);
     notifyListeners();
   }
 
   void unsubscribeFromAccelerometer() {
-    Mds.unsubscribe(_accSubscription);
+    if (_accSubscription == null) return;
+    Mds.unsubscribe(_accSubscription!);
     _accSubscription = null;
     notifyListeners();
   }
@@ -61,13 +66,12 @@ class DeviceModel extends ChangeNotifier {
   void subscribeToHr() {
     _hrData = "";
     _hrSubscription = Mds.subscribe(
-      Mds.createSubscriptionUri(_serial, "/Meas/HR"),
-      "{}",
-      (d, c) => {},
-      (e, c) => {},
-      (data) => _onNewHrData(data),
-      (e, c) => {}
-    );
+        Mds.createSubscriptionUri(_serial, "/Meas/HR"),
+        "{}",
+        (d, c) => {},
+        (e, c) => {},
+        (data) => _onNewHrData(data),
+        (e, c) => {});
     notifyListeners();
   }
 
@@ -80,7 +84,8 @@ class DeviceModel extends ChangeNotifier {
   }
 
   void unsubscribeFromHr() {
-    Mds.unsubscribe(_hrSubscription);
+    if (_hrSubscription == null) return;
+    Mds.unsubscribe(_hrSubscription!);
     _hrSubscription = null;
     notifyListeners();
   }
@@ -89,27 +94,19 @@ class DeviceModel extends ChangeNotifier {
     Map<String, bool> contract = new Map<String, bool>();
     contract["isOn"] = !_ledStatus;
     Mds.put(
-      Mds.createRequestUri(_serial, "/Component/Led"),
-        jsonEncode(contract),
-            (data, code) {
-          _ledStatus = !_ledStatus;
-          notifyListeners();
-        },
-            (e, c) => {}
-    );
+        Mds.createRequestUri(_serial, "/Component/Led"), jsonEncode(contract),
+        (data, code) {
+      _ledStatus = !_ledStatus;
+      notifyListeners();
+    }, (e, c) => {});
   }
 
   void getTemperature() {
-    Mds.get(
-        Mds.createRequestUri(_serial, "/Meas/Temp"),
-        "{}",
-            (data, code) {
-          double kelvin = jsonDecode(data)["Content"]["Measurement"];
-          double temperatureVal = kelvin - 274.15;
-          _temperature = temperatureVal.toStringAsFixed(1) + " C";
-          notifyListeners();
-        },
-            (e, c) => {}
-    );
+    Mds.get(Mds.createRequestUri(_serial, "/Meas/Temp"), "{}", (data, code) {
+      double kelvin = jsonDecode(data)["Content"]["Measurement"];
+      double temperatureVal = kelvin - 274.15;
+      _temperature = temperatureVal.toStringAsFixed(1) + " C";
+      notifyListeners();
+    }, (e, c) => {});
   }
 }
