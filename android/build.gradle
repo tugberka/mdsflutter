@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath 'com.android.tools.build:gradle:7.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.15'
     }
@@ -50,7 +50,7 @@ protobuf {
     protoc {
         // Download from repositories
         // artifact = 'com.google.protobuf:protoc:3.9.1'
-        artifact = 'com.google.protobuf:protoc:3.11.4'
+        artifact = 'com.google.protobuf:protoc:3.17.3'
     }
   /*   plugins {
         javalite {
