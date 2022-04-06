@@ -14,59 +14,61 @@ class ScanWidget extends StatefulWidget {
 }
 
 class _ScanWidgetState extends State<ScanWidget> {
-
-  AppModel model;
+  AppModel? model;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
     model = Provider.of<AppModel>(context, listen: false);
-    model.onDeviceMdsConnected((device) => {
-      Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          DeviceInteractionWidget(device)
-      ))
-    });
+    model?.onDeviceMdsConnected((device) => {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DeviceInteractionWidget(device)))
+        });
   }
 
   Future<void> initPlatformState() async {
     if (!mounted) return;
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      Permission.locationWhenInUse.isUndetermined.then((value) =>
-          Permission.locationWhenInUse.request()
-      );
+      Permission.locationWhenInUse.isDenied
+          .then((value) => Permission.locationWhenInUse.request());
 
-      Permission.locationWhenInUse.isDenied.then((value) =>
-          Permission.locationWhenInUse.request()
-      );
+      Permission.locationWhenInUse.isDenied
+          .then((value) => Permission.locationWhenInUse.request());
     }
   }
 
   Widget _buildDeviceItem(BuildContext context, int index) {
     return Card(
       child: ListTile(
-        title: Text(model.deviceList[index].name),
-        subtitle: Text(model.deviceList[index].address),
-        trailing: Text(model.deviceList[index].connectionStatus.statusName),
-        onTap: () => model.connectToDevice(model.deviceList[index]),
+        title: Text(model?.deviceList[index]?.name ?? ""),
+        subtitle: Text(model?.deviceList[index]?.address ?? ""),
+        trailing:
+            Text(model?.deviceList[index]?.connectionStatus.statusName ?? ""),
+        onTap: () {
+          final device = model?.deviceList[index];
+          if (device != null) model?.connectToDevice(device);
+        },
       ),
     );
   }
 
-  Widget _buildDeviceList(List<Device> deviceList) {
-    return new Expanded(child: new ListView.builder(
-        itemCount: model.deviceList.length,
-        itemBuilder: (BuildContext context, int index) => _buildDeviceItem(context, index)
-    )
-    );
+  Widget _buildDeviceList(List<Device?> deviceList) {
+    return new Expanded(
+        child: new ListView.builder(
+            itemCount: model?.deviceList.length,
+            itemBuilder: (BuildContext context, int index) =>
+                _buildDeviceItem(context, index)));
   }
 
   void onScanButtonPressed() {
-    if (model.isScanning) {
-      model.stopScan();
+    if (model?.isScanning ?? false) {
+      model?.stopScan();
     } else {
-      model.startScan();
+      model?.startScan();
     }
   }
 
@@ -81,7 +83,7 @@ class _ScanWidgetState extends State<ScanWidget> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                RaisedButton(
+                ElevatedButton(
                   onPressed: onScanButtonPressed,
                   child: Text(model.scanButtonText),
                 ),
@@ -89,7 +91,6 @@ class _ScanWidgetState extends State<ScanWidget> {
               ],
             );
           },
-        )
-    );
+        ));
   }
 }
