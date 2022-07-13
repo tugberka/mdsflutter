@@ -1,4 +1,4 @@
-## 1.0.1-dev.1 (13.07.2022)
+## 1.0.1 (13.07.2022)
 
 * Bugfix: Reconnect doesn't work if disconnect caused by BLE connection loss
 
