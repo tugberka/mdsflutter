@@ -1,8 +1,8 @@
 name: mdsflutter
 description: Flutter plugin for MDS (Movesense Device Service) that is used for communicating with Movesense devices.
-version: 1.0.0
-author: Tugberk Akdogan
-homepage: https://github.com/tugberka/mdsflutter
+version: 1.0.1-dev.1
+author: Tugberk Akdogan, Petri Lipponen
+homepage: https://github.com/petri-lipponen-movesense/mdsflutter
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
