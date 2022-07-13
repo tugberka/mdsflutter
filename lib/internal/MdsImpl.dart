@@ -15,6 +15,7 @@ class MdsImpl {
   Map _connectCbMap = Map<String, void Function(String)>();
   Map _connectErrorCbMap = Map<String, void Function()>();
   Map _disconnectCbMap = Map<String, void Function()>();
+  List<String> _disconnectedDevices = [];
   Map _requestResultCbMap = Map<int, void Function(String, int)>();
   Map _requestErrorCbMap = Map<int, void Function(String, int)>();
   Map _notifyCbMap = Map<int, void Function(String)>();
@@ -45,6 +46,7 @@ class MdsImpl {
 
   void disconnect(String address) {
     _channel.invokeMethod('disconnect', {"address": address});
+    _disconnectedDevices.add(address);
   }
 
   void get(
@@ -55,6 +57,7 @@ class MdsImpl {
     _idCounter++;
     _requestResultCbMap[_idCounter] = onSuccess;
     _requestErrorCbMap[_idCounter] = onError;
+
     _channel.invokeMethod('get', <String, dynamic> {
       "uri": uri,
       "contract": contract,
@@ -254,9 +257,14 @@ class MdsImpl {
       developer.log("Device disconnected, address: " + address);
       void Function() cb = _disconnectCbMap[address];
       cb();
-      _connectCbMap.remove(address);
-      _disconnectCbMap.remove(address);
-      _connectErrorCbMap.remove(address);
+      // Only remove from the map if the disconnect was initiated by user
+      if (_disconnectedDevices.contains(address))
+      {
+        _connectCbMap.remove(address);
+        _disconnectCbMap.remove(address);
+        _connectErrorCbMap.remove(address);
+        _disconnectedDevices.remove(address);
+      }
     }
   }
 
