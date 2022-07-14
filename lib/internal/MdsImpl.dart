@@ -245,23 +245,14 @@ class MdsImpl {
   }
 
   void _onConnect(String? address, String? serial) {
-    print("_onConnect: " + address! + ", " + serial!);
-    print("_connectCbMap: " + _connectCbMap.toString());
     if (_connectCbMap.containsKey(address)) {
-      print("New connected device " + serial);
       developer.log("New connected device with serial: " + serial!);
       void Function(String) cb = _connectCbMap[address];
       cb(serial);
     }
-    else
-    {
-      print("ADDRESS NOT FOUND!");
-    }
   }
 
   void _onDisconnect(String? address) {
-    print("_onDisconnect: " + address! );
-
     if (_disconnectCbMap.containsKey(address)) {
       developer.log("Device disconnected, address: " + address!);
       void Function() cb = _disconnectCbMap[address];
@@ -278,7 +269,6 @@ class MdsImpl {
   }
 
   void _onConnectionError(String? address) {
-    print("_onConnectionError: " + address! );
     if (_connectErrorCbMap.containsKey(address)) {
       developer.log("Device connection error, address: " + address!);
       void Function() cb = _connectErrorCbMap[address];
