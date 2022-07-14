@@ -20,10 +20,10 @@ class MdsImpl {
   Map _requestErrorCbMap = Map<int, void Function(String, int)>();
   Map _notifyCbMap = Map<int, void Function(String)>();
   Map _subscriptionErrorCbMap = Map<int, void Function(String, int)>();
-  Map _serialToAddressMap = Map<String, String>();
-  void Function(String, String) _newScannedDeviceCb;
+  Map _serialToAddressMap = Map<String?, String?>();
+  void Function(String?, String?)? _newScannedDeviceCb;
 
-  void startScan(void Function(String, String) onNewDeviceFound) {
+  void startScan(void Function(String?, String?) onNewDeviceFound) {
     _newScannedDeviceCb = onNewDeviceFound;
     _channel.invokeMethod('startScan', null);
   }
@@ -179,14 +179,14 @@ class MdsImpl {
               final body = decoded["Body"];
               final deviceInfo = body["DeviceInfo"];
               final connection = body["Connection"];
-              final uuid = connection["UUID"] as String;
-              final serial = deviceInfo["serial"] as String;
+              final uuid = connection["UUID"] as String?;
+              final serial = deviceInfo["serial"] as String?;
               _serialToAddressMap[serial] = uuid;
               _onConnect(uuid, serial);
             }
           } else if (method == "DEL") {
             final body = decoded["Body"];
-            final serial = body["Serial"] as String;
+            final serial = body["Serial"] as String?;
             if (_serialToAddressMap.containsKey(serial)) {
               _onDisconnect(_serialToAddressMap[serial]);
             }
@@ -208,11 +208,11 @@ class MdsImpl {
         break;
         break;
       case "onDisconnect":
-        String address = call.arguments;
+        String? address = call.arguments;
         _onDisconnect(address);
         break;
       case "onConnectionError":
-        String address = call.arguments;
+        String? address = call.arguments;
         _onConnectionError(address);
         break;
       case "onRequestResult":
@@ -238,23 +238,23 @@ class MdsImpl {
     }
   }
 
-  void _onNewScannedDevice(String name, String address) {
+  void _onNewScannedDevice(String? name, String? address) {
     if (_newScannedDeviceCb != null) {
-      _newScannedDeviceCb(name, address);
+      _newScannedDeviceCb!(name, address);
     }
   }
 
-  void _onConnect(String address, String serial) {
+  void _onConnect(String? address, String? serial) {
     if (_connectCbMap.containsKey(address)) {
-      developer.log("New connected device with serial: " + serial);
-      void Function(String) cb = _connectCbMap[address];
+      developer.log("New connected device with serial: " + serial!);
+      void Function(String?) cb = _connectCbMap[address];
       cb(serial);
     }
   }
 
-  void _onDisconnect(String address) {
+  void _onDisconnect(String? address) {
     if (_disconnectCbMap.containsKey(address)) {
-      developer.log("Device disconnected, address: " + address);
+      developer.log("Device disconnected, address: " + address!);
       void Function() cb = _disconnectCbMap[address];
       cb();
       // Only remove from the map if the disconnect was initiated by user
@@ -268,9 +268,9 @@ class MdsImpl {
     }
   }
 
-  void _onConnectionError(String address) {
+  void _onConnectionError(String? address) {
     if (_connectErrorCbMap.containsKey(address)) {
-      developer.log("Device connection error, address: " + address);
+      developer.log("Device connection error, address: " + address!);
       void Function() cb = _connectErrorCbMap[address];
       cb();
       _connectCbMap.remove(address);
