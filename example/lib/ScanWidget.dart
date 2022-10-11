@@ -14,8 +14,7 @@ class ScanWidget extends StatefulWidget {
 }
 
 class _ScanWidgetState extends State<ScanWidget> {
-
-  AppModel model;
+  late AppModel model;
 
   @override
   void initState() {
@@ -23,31 +22,28 @@ class _ScanWidgetState extends State<ScanWidget> {
     initPlatformState();
     model = Provider.of<AppModel>(context, listen: false);
     model.onDeviceMdsConnected((device) => {
-      Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          DeviceInteractionWidget(device)
-      ))
-    });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DeviceInteractionWidget(device)))
+        });
   }
 
   Future<void> initPlatformState() async {
     if (!mounted) return;
 
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      Permission.locationWhenInUse.isUndetermined.then((value) =>
-          Permission.locationWhenInUse.request()
-      );
-
-      Permission.locationWhenInUse.isDenied.then((value) =>
-          Permission.locationWhenInUse.request()
-      );
-    }
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+    ].request();
   }
 
   Widget _buildDeviceItem(BuildContext context, int index) {
     return Card(
       child: ListTile(
-        title: Text(model.deviceList[index].name),
-        subtitle: Text(model.deviceList[index].address),
+        title: Text(model.deviceList[index].name!),
+        subtitle: Text(model.deviceList[index].address!),
         trailing: Text(model.deviceList[index].connectionStatus.statusName),
         onTap: () => model.connectToDevice(model.deviceList[index]),
       ),
@@ -55,11 +51,11 @@ class _ScanWidgetState extends State<ScanWidget> {
   }
 
   Widget _buildDeviceList(List<Device> deviceList) {
-    return new Expanded(child: new ListView.builder(
-        itemCount: model.deviceList.length,
-        itemBuilder: (BuildContext context, int index) => _buildDeviceItem(context, index)
-    )
-    );
+    return new Expanded(
+        child: new ListView.builder(
+            itemCount: model.deviceList.length,
+            itemBuilder: (BuildContext context, int index) =>
+                _buildDeviceItem(context, index)));
   }
 
   void onScanButtonPressed() {
@@ -81,7 +77,7 @@ class _ScanWidgetState extends State<ScanWidget> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                RaisedButton(
+                ElevatedButton(
                   onPressed: onScanButtonPressed,
                   child: Text(model.scanButtonText),
                 ),
@@ -89,7 +85,6 @@ class _ScanWidgetState extends State<ScanWidget> {
               ],
             );
           },
-        )
-    );
+        ));
   }
 }

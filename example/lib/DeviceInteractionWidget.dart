@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdsflutter_example/DeviceModel.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +17,13 @@ class DeviceInteractionWidget extends StatefulWidget {
 }
 
 class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
-  AppModel _appModel;
+  late AppModel _appModel;
 
   @override
   void initState() {
     super.initState();
     _appModel = Provider.of<AppModel>(context, listen: false);
-    _appModel.onDeviceMdsDisconnected((device) => { Navigator.pop(context) });
+    _appModel.onDeviceMdsDisconnected((device) => {Navigator.pop(context)});
   }
 
   void _onAccelerometerButtonPressed(DeviceModel deviceModel) {
@@ -58,7 +57,7 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
         builder: (context, model, child) {
           return Scaffold(
               appBar: AppBar(
-                title: Text(device.name),
+                title: Text(device.name!),
               ),
               body: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -68,8 +67,7 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
                   _ledItem(model),
                   _temperatureItem(model)
                 ],
-              )
-          );
+              ));
         },
       ),
     );
@@ -80,8 +78,10 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
       child: ListTile(
         title: Text("Accelerometer"),
         subtitle: Text(deviceModel.accelerometerData),
-        trailing: RaisedButton(
-          child: Text(deviceModel.accelerometerSubscribed ? "Unsubscribe" : "Subscribe"),
+        trailing: ElevatedButton(
+          child: Text(deviceModel.accelerometerSubscribed
+              ? "Unsubscribe"
+              : "Subscribe"),
           onPressed: () => _onAccelerometerButtonPressed(deviceModel),
         ),
       ),
@@ -93,7 +93,7 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
       child: ListTile(
         title: Text("Heart rate"),
         subtitle: Text(deviceModel.hrData),
-        trailing: RaisedButton(
+        trailing: ElevatedButton(
           child: Text(deviceModel.hrSubscribed ? "Unsubscribe" : "Subscribe"),
           onPressed: () => _onHrButtonPressed(deviceModel),
         ),
@@ -107,7 +107,7 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
         title: Text("Led"),
         trailing: Switch(
           value: deviceModel.ledStatus,
-          onChanged: (b) => { deviceModel.switchLed() },
+          onChanged: (b) => {deviceModel.switchLed()},
         ),
       ),
     );
@@ -118,7 +118,7 @@ class _DeviceInteractionWidgetState extends State<DeviceInteractionWidget> {
       child: ListTile(
         title: Text("Temperature"),
         subtitle: Text(deviceModel.temperature),
-        trailing: RaisedButton(
+        trailing: ElevatedButton(
           child: Text("Get"),
           onPressed: () => deviceModel.getTemperature(),
         ),
