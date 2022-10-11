@@ -6,18 +6,18 @@ import 'package:mdsflutter/Mds.dart';
 import 'dart:developer' as developer;
 
 class DeviceModel extends ChangeNotifier {
-  String _serial;
-  String _name;
+  String? _serial;
+  String? _name;
 
-  String get name => _name;
-  String get serial => _serial;
+  String? get name => _name;
+  String? get serial => _serial;
 
-  int _accSubscription;
+  int? _accSubscription;
   String _accelerometerData = "";
   String get accelerometerData => _accelerometerData;
   bool get accelerometerSubscribed => _accSubscription != null;
 
-  int _hrSubscription;
+  int? _hrSubscription;
   String _hrData = "";
   String get hrData => _hrData;
   bool get hrSubscribed => _hrSubscription != null;
@@ -33,7 +33,7 @@ class DeviceModel extends ChangeNotifier {
   void subscribeToAccelerometer() {
     _accelerometerData = "";
     _accSubscription = Mds.subscribe(
-        Mds.createSubscriptionUri(_serial, "/Meas/Acc/104"),
+        Mds.createSubscriptionUri(_serial!, "/Meas/Acc/104"),
         "{}",
         (d, c) => {},
         (e, c) => {},
@@ -53,7 +53,7 @@ class DeviceModel extends ChangeNotifier {
   }
 
   void unsubscribeFromAccelerometer() {
-    Mds.unsubscribe(_accSubscription);
+    Mds.unsubscribe(_accSubscription!);
     _accSubscription = null;
     notifyListeners();
   }
@@ -61,7 +61,7 @@ class DeviceModel extends ChangeNotifier {
   void subscribeToHr() {
     _hrData = "";
     _hrSubscription = Mds.subscribe(
-      Mds.createSubscriptionUri(_serial, "/Meas/HR"),
+      Mds.createSubscriptionUri(_serial!, "/Meas/HR"),
       "{}",
       (d, c) => {},
       (e, c) => {},
@@ -80,7 +80,7 @@ class DeviceModel extends ChangeNotifier {
   }
 
   void unsubscribeFromHr() {
-    Mds.unsubscribe(_hrSubscription);
+    Mds.unsubscribe(_hrSubscription!);
     _hrSubscription = null;
     notifyListeners();
   }
@@ -89,7 +89,7 @@ class DeviceModel extends ChangeNotifier {
     Map<String, bool> contract = new Map<String, bool>();
     contract["isOn"] = !_ledStatus;
     Mds.put(
-      Mds.createRequestUri(_serial, "/Component/Led"),
+      Mds.createRequestUri(_serial!, "/Component/Led"),
         jsonEncode(contract),
             (data, code) {
           _ledStatus = !_ledStatus;
@@ -101,7 +101,7 @@ class DeviceModel extends ChangeNotifier {
 
   void getTemperature() {
     Mds.get(
-        Mds.createRequestUri(_serial, "/Meas/Temp"),
+        Mds.createRequestUri(_serial!, "/Meas/Temp"),
         "{}",
             (data, code) {
           double kelvin = jsonDecode(data)["Content"]["Measurement"];

@@ -14,8 +14,8 @@ class AppModel extends ChangeNotifier {
 
   final Set<Device> _deviceList = Set();
   bool _isScanning = false;
-  void Function(Device) _onDeviceMdsConnectedCb;
-  void Function(Device) _onDeviceDisonnectedCb;
+  void Function(Device)? _onDeviceMdsConnectedCb;
+  void Function(Device)? _onDeviceDisonnectedCb;
 
   UnmodifiableListView<Device> get deviceList => UnmodifiableListView(_deviceList);
 
@@ -65,7 +65,7 @@ class AppModel extends ChangeNotifier {
 
   void connectToDevice(Device device) {
     device.onConnecting();
-    Mds.connect(device.address,
+    Mds.connect(device.address!,
             (serial) => _onDeviceMdsConnected(device.address, serial),
             () => _onDeviceDisconnected(device.address),
             () => _onDeviceConnectError(device.address)
@@ -73,33 +73,33 @@ class AppModel extends ChangeNotifier {
   }
 
   void disconnectFromDevice(Device device) {
-    Mds.disconnect(device.address);
+    Mds.disconnect(device.address!);
     _onDeviceDisconnected(device.address);
   }
 
-  void _onDeviceMdsConnected(String address, String serial) {
+  void _onDeviceMdsConnected(String? address, String serial) {
     Device foundDevice = _deviceList.firstWhere((element) => element.address == address);
     if (foundDevice != null) {
       foundDevice.onMdsConnected(serial);
       notifyListeners();
       if (_onDeviceMdsConnectedCb != null) {
-        _onDeviceMdsConnectedCb.call(foundDevice);
+        _onDeviceMdsConnectedCb!.call(foundDevice);
       }
     }
   }
 
-  void _onDeviceDisconnected(String address) {
+  void _onDeviceDisconnected(String? address) {
     Device foundDevice = _deviceList.firstWhere((element) => element.address == address);
     if (foundDevice != null) {
       foundDevice.onDisconnected();
       notifyListeners();
       if (_onDeviceDisonnectedCb != null) {
-        _onDeviceDisonnectedCb.call(foundDevice);
+        _onDeviceDisonnectedCb!.call(foundDevice);
       }
     }
   }
 
-  void _onDeviceConnectError(String address) {
+  void _onDeviceConnectError(String? address) {
     _onDeviceDisconnected(address);
   }
 }
