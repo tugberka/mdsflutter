@@ -93,7 +93,7 @@ final class BleController: NSObject, CBCentralManagerDelegate {
     
     private func parseSerial(_ localName: String) -> String {
         let idx = localName.index(localName.endIndex, offsetBy: -12)
-        return localName.substring(from: idx)
+        return String(localName[idx...])
     }
     
     func retrieveFromSystem()

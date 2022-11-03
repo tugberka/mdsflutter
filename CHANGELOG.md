@@ -1,4 +1,4 @@
-## 1.1.0-dev.1
+## 1.1.0
 
 * Feature: Null safety
 
