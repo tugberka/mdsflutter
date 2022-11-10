@@ -2,6 +2,11 @@
 
 Flutter plugin for MDS (Movesense Device Service) that is used for communicating with Movesense devices.
 
+## NEW: Async API
+
+This is the development version for a new Async API. Please give any opinions, suggestions and other feedback to me (Petri.Lipponen (at) movesense.com).
+
+
 ### Additional steps for using the plugin
 
 #### iOS
