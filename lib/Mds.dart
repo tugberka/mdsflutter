@@ -175,12 +175,14 @@ class MdsAsync {
   /// Make an async GET request for a resource. uri must include "suunto://" prefix
   /// and device serial if needed. contract must be a json string.
   static Future<dynamic> get(String uri, String contract) {
-    final mdscompleter = Completer<String>();
+    final mdscompleter = Completer<dynamic>();
 
     MdsImpl().get(uri, contract, (data, status) {
-      final content = jsonDecode(data);
-      mdscompleter.complete(content["Content"]);
+      debugPrint("MdsAsync.get result: $status, $data");
+      final content = data.isEmpty ? {} : jsonDecode(data);
+      mdscompleter.complete(content?["Content"]);
     }, (data, status) {
+      debugPrint("MdsAsync.get error: $status, $data");
       mdscompleter.completeError(data);
     });
     return mdscompleter.future;
@@ -189,12 +191,15 @@ class MdsAsync {
   /// Make a PUT request for a resource. uri must include "suunto://" prefix
   /// and device serial if needed. contract must be a json string.
   static Future<dynamic> put(String uri, String contract) {
-    final mdscompleter = Completer<String>();
+    final mdscompleter = Completer<dynamic>();
 
     MdsImpl().put(uri, contract, (data, status) {
-      final content = jsonDecode(data);
-      mdscompleter.complete(content["Content"]);
+      debugPrint("MdsAsync.put result: $status, $data");
+      final content = data.isEmpty ? {} : jsonDecode(data);
+      debugPrint(" content: $content");
+      mdscompleter.complete(content?["Content"]);
     }, (data, status) {
+      debugPrint("MdsAsync.put error: $status, $data");
       mdscompleter.completeError(data);
     });
     return mdscompleter.future;
@@ -206,11 +211,12 @@ class MdsAsync {
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
   static Future<dynamic> post(String uri, String contract) {
-    final mdscompleter = Completer<String>();
+    final mdscompleter = Completer<dynamic>();
 
     MdsImpl().post(uri, contract, (data, status) {
-      final content = jsonDecode(data);
-      mdscompleter.complete(content["Content"]);
+      final content = data.isEmpty ? {} : jsonDecode(data);
+      debugPrint(" content: $content");
+      mdscompleter.complete(content?["Content"]);
     }, (data, status) {
       mdscompleter.completeError(data);
     });
@@ -223,11 +229,12 @@ class MdsAsync {
   /// string format, and status code. Upon error, onError is called with reason
   /// and status code.
   static Future<dynamic> del(String uri, String contract) {
-    final mdscompleter = Completer<String>();
+    final mdscompleter = Completer<dynamic>();
 
     MdsImpl().del(uri, contract, (data, status) {
-      final content = jsonDecode(data);
-      mdscompleter.complete(content["Content"]);
+      final content = data.isEmpty ? {} : jsonDecode(data);
+      debugPrint(" content: $content");
+      mdscompleter.complete(content?["Content"]);
     }, (data, status) {
       mdscompleter.completeError(data);
     });
