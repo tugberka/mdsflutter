@@ -183,7 +183,7 @@ class MdsAsync {
       mdscompleter.complete(content?["Content"]);
     }, (data, status) {
       debugPrint("MdsAsync.get error: $status, $data");
-      mdscompleter.completeError(data);
+      mdscompleter.completeError(MdsError(status, data));
     });
     return mdscompleter.future;
   }
@@ -200,7 +200,7 @@ class MdsAsync {
       mdscompleter.complete(content?["Content"]);
     }, (data, status) {
       debugPrint("MdsAsync.put error: $status, $data");
-      mdscompleter.completeError(data);
+      mdscompleter.completeError(MdsError(status, data));
     });
     return mdscompleter.future;
   }
@@ -218,7 +218,7 @@ class MdsAsync {
       debugPrint(" content: $content");
       mdscompleter.complete(content?["Content"]);
     }, (data, status) {
-      mdscompleter.completeError(data);
+      mdscompleter.completeError(MdsError(status, data));
     });
     return mdscompleter.future;
   }
@@ -236,7 +236,7 @@ class MdsAsync {
       debugPrint(" content: $content");
       mdscompleter.complete(content?["Content"]);
     }, (data, status) {
-      mdscompleter.completeError(data);
+      mdscompleter.completeError(MdsError(status, data));
     });
     return mdscompleter.future;
   }

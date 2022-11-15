@@ -1,3 +1,7 @@
+## 1.9.9-dev2
+
+* Improved errors from Async APis
+
 ## 1.9.9-dev1
 
 * Feature: Async API (See: MdsAsync)  Please send feedback and improvement ideas!
