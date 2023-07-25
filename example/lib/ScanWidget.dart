@@ -20,12 +20,11 @@ class _ScanWidgetState extends State<ScanWidget> {
     super.initState();
     initPlatformState();
     model = Provider.of<AppModel>(context, listen: false);
-    model.onDeviceMdsConnected((device) => {
-          Navigator.push(
+    model.onDeviceMdsConnected((device) => Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => DeviceInteractionWidget(device)))
-        });
+        );
   }
 
   Future<void> initPlatformState() async {
