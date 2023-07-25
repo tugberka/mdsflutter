@@ -1,3 +1,9 @@
+## 2.0.0-beta1
+
+* Tested with latest flutter and MDS (3.15.0)
+* Updated to more modern gradle
+* changed minimum ios version to 12
+
 ## 1.9.9-dev2
 
 * Improved errors from Async APis
