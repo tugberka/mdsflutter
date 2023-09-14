@@ -49,18 +49,20 @@ protobuf {
     // Configure the protoc executable
     protoc {
         // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.9.1'
+        artifact = "com.google.protobuf:protoc:3.24.3"
     }
     plugins {
         javalite {
             // The codegen for lite comes as a separate artifact
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
         }
     }
     generateProtoTasks {
         all().each { task ->
-            task.plugins {
-                javalite { }
+            task.builtins {
+                java {
+                    option "lite"
+                }
             }
         }
     }
@@ -68,7 +70,7 @@ protobuf {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
+    implementation "com.google.protobuf:protobuf-javalite:3.24.3"
     // RxAndroidBle helper library
     implementation "com.polidea.rxandroidble2:rxandroidble:1.11.0"
     implementation(name: 'mdslib', version: '+', ext: 'aar')

@@ -1,3 +1,7 @@
+## 2.0.0-beta2
+
+* Changed protobuf-lite to -javalite (Issue #4)
+
 ## 2.0.0-beta1
 
 * Tested with latest flutter and MDS (3.15.0)

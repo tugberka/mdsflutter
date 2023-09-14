@@ -4,7 +4,7 @@ description: >-
   that is used for communicating with Movesense devices. This plugin was createad originally by 
   Tugberk Agdokan and it used to be at https://github.com/tugberka/mdsflutter.
 
-version: 2.0.0-beta1
+version: 2.0.0-beta2
 homepage: https://github.com/petri-lipponen-movesense/mdsflutter
 
 environment:
