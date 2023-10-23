@@ -1,3 +1,7 @@
+## 2.0.0-beta3
+
+* Fixed "MdsAsync.get returns null" (Issue #6)
+
 ## 2.0.0-beta2
 
 * Changed protobuf-lite to -javalite (Issue #4)
