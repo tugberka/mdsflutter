@@ -179,8 +179,10 @@ class MdsAsync {
 
     MdsImpl().get(uri, contract, (data, status) {
       debugPrint("MdsAsync.get result: $status, $data");
-      final content = data.isEmpty ? {} : jsonDecode(data);
-      mdscompleter.complete(content?["Content"]);
+      var content = data.isEmpty ? {} : jsonDecode(data);
+      // Handle case where content is not in "Content" key (MDS Logbook proxy service)
+      content = content["Content"] ?? content;
+      mdscompleter.complete(content);
     }, (data, status) {
       debugPrint("MdsAsync.get error: $status, $data");
       mdscompleter.completeError(MdsError(status, data));
