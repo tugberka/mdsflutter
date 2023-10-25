@@ -13,7 +13,7 @@ This is the development version for a new Async API. Please give any opinions, s
 
 1. Intall Movesense iOS library using CocoaPods with adding this line to your app's Podfile:
   ```
-  pod 'Movesense', :git => 'ssh://git@altssh.bitbucket.org:443/suunto/movesense-mobile-lib.git'
+  pod 'Movesense', :git => 'ssh://git@altssh.bitbucket.org:443/movesense/movesense-mobile-lib.git'
   ```
 
 2. Remove "use_frameworks!" from your Podfile so that libmds.a can be used correctly.
