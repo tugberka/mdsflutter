@@ -1,4 +1,4 @@
-## 2.4.0-alpha1
+## 2.4.0
 
 * Technical: Updated to latest Android SDK (36)
 * Technical: Updated to protobuf 6.0.0

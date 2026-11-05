@@ -2,9 +2,8 @@
 
 Flutter plugin for MDS (Movesense Device Service) that is used for communicating with Movesense devices.
 
-## NEW: Async API
+**NEW**: Async API is now considered production
 
-This is the development version for a new Async API. Please give any opinions, suggestions and other feedback to me (Petri.Lipponen (at) movesense.com).
 
 
 ### Additional steps for using the plugin
@@ -44,7 +43,8 @@ allprojects {
     }
 }
 ```
-## Usage
+
+## Usage (sync API)
 
 ```dart
 import 'package:mdsflutter/Mds.dart';
@@ -88,3 +88,61 @@ Mds.unsubscribe(subscriptionId);
 ```
 For more information and detailed documentation, check Mds.dart file. Example
 application further demonstrates the usage off the plugin.
+
+## Usage (async API)
+
+`MdsAsync` provides the same scanning methods as `Mds`, and asynchronous
+`get`, `put`, `post`, `del`, and `subscribe` methods. Use `Mds.connect` and
+`Mds.disconnect` to manage device connections.
+
+```dart
+import 'dart:convert';
+
+import 'package:mdsflutter/Mds.dart';
+
+// Scan for devices, then connect using Mds.connect as shown above.
+MdsAsync.startScan((name, address) {
+  // Handle new scanned device.
+});
+// Call MdsAsync.stopScan() when scanning should end.
+
+Future<void> readTemperature(String serial) async {
+  try {
+    final result = await MdsAsync.get(
+      Mds.createRequestUri(serial, "/Meas/Temp"),
+      "{}",
+    );
+    print(result);
+  } on MdsError catch (error) {
+    print("Request failed (${error.status}): ${error.error}");
+  }
+}
+
+Future<void> switchLed(String serial, bool isOn) async {
+  await MdsAsync.put(
+    Mds.createRequestUri(serial, "/Component/Led"),
+    jsonEncode({"isOn": isOn}),
+  );
+}
+
+void subscribeToAccelerometer(String serial) {
+  // Cancelling the stream subscription unsubscribes.
+  final subscription = MdsAsync.subscribe(
+    Mds.createSubscriptionUri(serial, "/Meas/Acc/104"),
+    "{}",
+  ).listen(
+    (data) {
+      // Handle notification data.
+    },
+    onError: (Object error) {
+      // Subscription errors are reported as MdsError.
+    },
+  );
+  // Call subscription.cancel() when notifications are no longer needed.
+}
+```
+
+The request methods return `Future<dynamic>` with decoded response data.
+`subscribe` returns a `Stream<dynamic>` of decoded notifications. Request and
+subscription errors are reported as `MdsError`, which contains the HTTP status
+and error message.
